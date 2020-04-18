@@ -1,15 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
-from flask import request
-from flask import jsonify
-import logging
+import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://tyler.lanigan@localhost:5432/todoapp'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
-logger = logging.getLogger('todo_application')
 
 
 class Todo(db.Model):
@@ -23,16 +19,32 @@ class Todo(db.Model):
 
 db.create_all()
 
-
+# Add some error handling.
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
-    description = request.json['description']
-    todo = Todo(description=description)
-    db.session.add(todo)
-    db.session.commit()
-    return jsonify({
-        'description': todo.description
-    })
+    error = False
+    body = {}
+    try:
+        description = request.json['description']
+        todo = Todo(description=description)
+        db.session.add(todo)
+        db.session.commit()
+        # Instead of putting this in jsonify like it was before,
+        # we make a body here before we close in finally. This way
+        # we don't access the todo object after the session is closed
+        # and cuase an error.
+        body['description'] = todo.description
+    except:
+        error = True
+        db.session.rollback()
+        app.logger.info(sys.exc_info())
+    finally:
+        db.session.close()
+    if error:
+        # Always return an intentional error
+        abort(400)
+    if not error:
+        return jsonify(body)
 
 
 @app.route('/')
