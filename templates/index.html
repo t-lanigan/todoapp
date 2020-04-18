@@ -2,18 +2,57 @@
 
 <head>
     <title>Todo App</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <form method="post" action="/todos/create">
-        <input type="text" name="description" />
+    <!-- <div id="error" class="hidden">Something went wrong!</div> -->
+    <form id="form">
+        <input type="text" id="description" name="description" />
         <input type="submit" value="Create" />
     </form>
-    <ul>
+    <div id='error' class="hidden">Something went wrong!</div>
+    <ul id="todos">
         {% for d in data %}
         <li>{{ d.description }}</li>
         {% endfor %}
     </ul>
+    <script>
+        document.getElementById('form').onsubmit = function (e) {
+            // This default behaviour does a full page refresh
+            e.preventDefault();
+            console.log("Using Fetch in AJAX");
+            console.log(document.getElementById('description').value);
+            // Fetch is a promise based library.
+            fetch('/todos/create', {
+                method: 'POST',
+                body: JSON.stringify({
+                    // Get what the user types in the description field.
+                    'description': document.getElementById('description').value,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (jsonResponse) {
+                    console.log(jsonResponse)
+                    // Append to the list in the front end.
+                    const liItem = document.createElement('LI');
+                    liItem.innerHTML = jsonResponse['description'];
+                    document.getElementById('todos').appendChild(liItem);
+                })
+                .catch(function () {
+                    document.getElementById('error').className = '';
+                });
+        }
+    </script>
 </body>
 
 </html>
