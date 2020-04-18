@@ -36,10 +36,12 @@
                     'Content-Type': 'application/json',
                 }
             })
+                // parse the response as a json response.
                 .then(function (response) {
                     return response.json();
                 })
                 // .then(response => response.json()) alternative way to do it
+                //Handle the json response 
                 .then(function (jsonResponse) {
                     // Can log to browser console using this fn. See console using cmd+option+j
                     console.log(jsonResponse)
