@@ -25,8 +25,6 @@
         document.getElementById('form').onsubmit = function (e) {
             // This default behaviour does a full page refresh
             e.preventDefault();
-            console.log("Using Fetch in AJAX");
-            console.log(document.getElementById('description').value);
             // Fetch is a promise based library.
             fetch('/todos/create', {
                 method: 'POST',
@@ -38,10 +36,9 @@
                     'Content-Type': 'application/json',
                 }
             })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (jsonResponse) {
+                .then(response => response.json()) //shorthand way of doing a function (syntactic sugar).
+                .then(function (jsonResponse) { // can also do like this
+                    // Can log to browser console using this fn. See console using cmd+option+j
                     console.log(jsonResponse)
                     // Append to the list in the front end.
                     const liItem = document.createElement('LI');
