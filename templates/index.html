@@ -36,8 +36,11 @@
                     'Content-Type': 'application/json',
                 }
             })
-                .then(response => response.json()) //shorthand way of doing a function (syntactic sugar).
-                .then(function (jsonResponse) { // can also do like this
+                .then(function (response) {
+                    return response.json();
+                })
+                // .then(response => response.json()) alternative way to do it
+                .then(function (jsonResponse) {
                     // Can log to browser console using this fn. See console using cmd+option+j
                     console.log(jsonResponse)
                     // Append to the list in the front end.
