@@ -1,6 +1,8 @@
 <html>
 
 <head>
+    <title>Todos</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico')}}" />
     <title>Todo App</title>
     <style>
         .hidden {
@@ -17,8 +19,8 @@
     </form>
     <div id='error' class="hidden">Something went wrong!</div>
     <ul id="todos">
-        {% for d in data %}
-        <li>{{ d.description }}</li>
+        {% for todo in todos %}
+        <li>{{ todo.description }}</li>
         {% endfor %}
     </ul>
     <script>
