@@ -11,6 +11,7 @@ run:
 
 reset-db:
 	dropdb $(APP_NAME) && createdb $(APP_NAME)
+	flask db upgrade
 
 start-db-server:
 	pg_ctl -D /usr/local/var/postgres start
