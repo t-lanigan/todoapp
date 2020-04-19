@@ -8,19 +8,24 @@
         .hidden {
             display: none;
         }
+
+        ul {
+            list-style: None;
+            padding: 0;
+            margin: 0;
+        }
     </style>
 </head>
 
 <body>
-    <!-- <div id="error" class="hidden">Something went wrong!</div> -->
     <form id="form">
         <input type="text" id="description" name="description" />
         <input type="submit" value="Create" />
     </form>
     <div id='error' class="hidden">Something went wrong!</div>
     <ul id="todos">
-        {% for todo in todos %}
-        <li>{{ todo.description }}</li>
+        {% for d in data %}
+        <li><input type="checkbox" {% if d.completed%} checked {% endif %} />{{ d.description }}</li>
         {% endfor %}
     </ul>
     <script>
