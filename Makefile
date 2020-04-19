@@ -1,5 +1,11 @@
 APP_NAME := todoapp
 
+deps:
+	pip install -r requirements.txt
+
+dev-deps:
+	pip install -r requirements-dev.txt
+
 run:
 	FLASK_APP=app.py FLASK_DEBUG=true flask run
 
@@ -14,3 +20,4 @@ stop-db-server:
 
 connect-to-db:
 	psql $(APP_NAME)
+
