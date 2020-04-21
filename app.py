@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sys import exc_info
+import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://tyler.lanigan@localhost:5432/todoapp'
@@ -41,11 +41,12 @@ def create_todo():
     body = {}
     try:
         description = request.get_json()['description']
-        todo = Todo(description=description, completed=False)
+        list_id = request.get_json()['list_id']
+        todo = Todo(description=description)
+        active_list = TodoList.query.get(list_id)
+        todo.list = active_list
         db.session.add(todo)
         db.session.commit()
-        body['id'] = todo.id
-        body['completed'] = todo.completed
         body['description'] = todo.description
     except:
         error = True
@@ -53,10 +54,10 @@ def create_todo():
         print(sys.exc_info())
     finally:
         db.session.close()
-    if error:
-        abort(400)
-    else:
+    if not error:
         return jsonify(body)
+    else:
+        abort(500)
 
 
 @app.route('/todos/<todo_id>/set-completed', methods=['POST'])
@@ -91,7 +92,9 @@ def get_list_todos(list_id):
     return render_template('index.html',
                            lists=TodoList.query.all(),
                            active_list=TodoList.query.get(list_id),
-                           todos=Todo.query.filter_by(list_id=list_id).order_by('id').all())
+                           todos=Todo.query.filter_by(
+                               list_id=list_id).order_by('id').all()
+                           )
 
 
 @app.route('/')
