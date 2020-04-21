@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import sys
+from sys import exc_info
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://tyler.lanigan@localhost:5432/todoapp'
@@ -86,6 +86,14 @@ def delete_todo(todo_id):
     return jsonify({'success': True})
 
 
+@app.route('/lists/<list_id>')
+def get_list_todos(list_id):
+    return render_template('index.html',
+                           lists=TodoList.query.all(),
+                           active_list=TodoList.query.get(list_id),
+                           todos=Todo.query.filter_by(list_id=list_id).order_by('id').all())
+
+
 @app.route('/')
 def index():
-    return render_template('index.html', todos=Todo.query.order_by('id').all())
+    return redirect(url_for('get_list_todos', list_id=1))
