@@ -14,8 +14,7 @@ Mostly just a playground for building database backed apps.
 ## Development
 
 * run `make dev-deps`
-* Set up database migrations folder using `flask db init`.
-
+* If not already there, set up database migrations folder using `flask db init`.
 
 ## Migrations
 
